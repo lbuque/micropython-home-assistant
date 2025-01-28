@@ -95,9 +95,7 @@ class HAMqtt:
             self._client.set_last_will(topic, payload, retain=retain)
 
     def process_messages(self, topic, payload):
-        print("MHA: received call ")
-        print(topic)
-        print(", len:", len(payload))
+        print("MHA: received call %s, len: %d" % (topic, len(payload)))
         if self.on_message is not None:
             self.on_message(topic, payload)
 
@@ -115,8 +113,8 @@ class HAMqtt:
         for device in self._device_types:
             device.on_mqtt_connected()
 
-    def _on_message(self, client, userdata, message):
-        self.process_messages(message.topic, message.payload)
+    def _on_message(self, topic, payload):
+        self.process_messages(topic, payload)
 
     def _on_disconnect(self, client, userdata, reason_code):
         print("MHA: MQTT disconnected")

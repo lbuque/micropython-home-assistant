@@ -7,6 +7,7 @@ _attrs = {
     "HAMqtt": "ha_mqtt",
     "HABaseDeviceType": "devices.basic_device",
     "HABinarySensor": "devices.binary_sensor",
+    "HASwitch": "devices.switch",
 }
 
 

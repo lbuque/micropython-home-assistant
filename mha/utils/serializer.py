@@ -77,14 +77,26 @@ class HASerializer:
         if mqtt is None or mqtt.data_prefix is None or mqtt.device is None:
             return None
 
-        full_topic = (
-            mqtt.data_prefix + HASerializerSlash + mqtt.device.get_unique_id() + HASerializerSlash
-        )
-        if object_id is None:
-            full_topic += object_id + HASerializerSlash
+        l = [
+            mqtt.data_prefix,
+            HASerializerSlash,
+            mqtt.device.get_unique_id(),
+            HASerializerSlash,
+        ]
+        object_id is None and l.extend([object_id, HASerializerSlash])
+        l.append(topic)
 
-        full_topic += topic
-        return full_topic
+        return "".join(l)
+
+    def compare_data_topics(self, actualTopic: str, objectId: str, topic: str) -> bool:
+        if actualTopic is None:
+            return False
+
+        expectedTopic = self.generate_data_topic(objectId, topic)
+        if expectedTopic is None:
+            return False
+
+        return actualTopic == expectedTopic.encode("utf-8")
 
     @staticmethod
     def generate_config_topic(component, object_id):
@@ -92,19 +104,17 @@ class HASerializer:
         if mqtt is None or mqtt.data_prefix is None or mqtt.device is None:
             return None
 
-        topic = (
-            mqtt.discovery_prefix
-            + HASerializerSlash
-            + component
-            + HASerializerSlash
-            + mqtt.device.get_unique_id()
-            + HASerializerSlash
-            + object_id
-            + HASerializerSlash
-            + HAConfigTopic
-        )
-
-        return topic
+        return "".join([
+            mqtt.discovery_prefix,
+            HASerializerSlash,
+            component,
+            HASerializerSlash,
+            mqtt.device.get_unique_id(),
+            HASerializerSlash,
+            object_id,
+            HASerializerSlash,
+            HAConfigTopic,
+        ])
 
     def _flush_entry(self):
         for entry in self._entries:

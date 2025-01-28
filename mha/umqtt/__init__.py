@@ -186,6 +186,7 @@ class MQTTClient:
         self.sock.send(pkt)
         self._send_str(topic)
         self.sock.send(qos.to_bytes(1, "little"))
+        self.sock.setblocking(True)
         while 1:
             op = self._wait_msg()
             if op == 0x90:

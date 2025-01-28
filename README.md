@@ -35,7 +35,7 @@ MHA allows to integrate an Micropython based device with Home Assistant using MQ
 | [Select][]              |     ❌     |
 | [Sensor][]              |     ❌     |
 | [Siren][]               |     ❌     |
-| [Switch][]              |     ❌     |
+| [Switch][]              |     ✅     |
 | [Update][]              |     ❌     |
 | [Tag scanner][]         |     ❌     |
 | [Text][]                |     ❌     |
@@ -76,6 +76,7 @@ MHA allows to integrate an Micropython based device with Home Assistant using MQ
 | Example                                    | Description                                       |
 | ------------------------------------------ | ------------------------------------------------- |
 | [Binary sensor](examples/binary_sensor.py) | Using the binary sensor as a door contact sensor. |
+| [Switch](examples/switch.py) | The LED that's controlled by the Home Assistant. |
 
 ## Compatible platform
 

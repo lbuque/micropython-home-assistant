@@ -56,7 +56,7 @@ class HABaseDeviceType:
         return HAMqtt.instance()
 
     def subscribe_topic(self, unique_id, topic):
-        full_topic = HASerializer.generate_data_topic(unique_id, topic)
+        full_topic = HASerializer.generate_data_topic(unique_id, topic).encode("utf-8")
         HAMqtt.instance().subscribe(full_topic)
 
     def on_message(self, topic, payload):
@@ -83,8 +83,6 @@ class HABaseDeviceType:
         # print("MHA publish_config payload: ", payload)
         if topic is not None:
             self.mqtt().publish(topic, payload, True)
-
-        self.destroy_serializer()
 
     def publish_availability(self):
         device = self.mqtt().device
