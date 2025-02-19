@@ -4,24 +4,13 @@
 
 from .basic_device import HABaseDeviceType
 from ..utils.serializer import HASerializer
-from ..utils.constants import (
-    HAComponentSwitch,
-    HANameProperty,
-    HAObjectIdProperty,
-    HADeviceClassProperty,
-    HAIconProperty,
-    HAStateTopic,
-    HAStateOn,
-    HAStateOff,
-    HARetainProperty,
-    HAOptimisticProperty,
-    HACommandTopic
-)
+from ..utils import constants
+
 
 class HASwitch(HABaseDeviceType):
 
     def __init__(self, unique_id):
-        super().__init__(HAComponentSwitch, unique_id)
+        super().__init__(constants.HAComponentSwitch, unique_id)
         self._class = None
         self._icon = None
         self._retain = False
@@ -71,19 +60,19 @@ class HASwitch(HABaseDeviceType):
             return
 
         self._serializer = HASerializer(self)
-        self._serializer.set_kv(HANameProperty, self._name)
-        self._serializer.set_kv(HAObjectIdProperty, self._object_id)
+        self._serializer.set_kv(constants.HANameProperty, self._name)
+        self._serializer.set_kv(constants.HAObjectIdProperty, self._object_id)
         self._serializer.set_flag(HASerializer.WithUniqueId)
-        self._serializer.set_kv(HADeviceClassProperty, self._class)
-        self._serializer.set_kv(HAIconProperty, self._icon)
+        self._serializer.set_kv(constants.HADeviceClassProperty, self._class)
+        self._serializer.set_kv(constants.HAIconProperty, self._icon)
 
-        self._retain and self._serializer.set_kv(HARetainProperty, self._retain)
-        self._optimistic and self._serializer.set_kv(HAOptimisticProperty, self._optimistic)
+        self._retain and self._serializer.set_kv(constants.HARetainProperty, self._retain)
+        self._optimistic and self._serializer.set_kv(constants.HAOptimisticProperty, self._optimistic)
 
         self._serializer.set_flag(HASerializer.WithDevice)
         self._serializer.set_flag(HASerializer.WithAvailability)
-        self._serializer.set_topic(HAStateTopic)
-        self._serializer.set_topic(HACommandTopic)
+        self._serializer.set_topic(constants.HAStateTopic)
+        self._serializer.set_topic(constants.HACommandTopic)
 
     def on_mqtt_connected(self):
         if self.unique_id is None:
@@ -94,13 +83,13 @@ class HASwitch(HABaseDeviceType):
         self.publish_config()
         self.publish_availability()
         not self._retain and self._publish_state(self._current_state)
-        self.subscribe_topic(self.unique_id, HACommandTopic)
+        self.subscribe_topic(self.unique_id, constants.HACommandTopic)
 
     def on_message(self, topic: str, payload: str) -> None:
         print("MHA: HASwitch on_message: ", topic, payload)
-        if self._command_callback and self._serializer and self._serializer.compare_data_topics(topic, self.unique_id, HACommandTopic):
-            state = len(payload) == len(HAStateOn)
+        if self._command_callback and self._serializer and self._serializer.compare_data_topics(topic, self.unique_id, constants.HACommandTopic):
+            state = len(payload) == len(constants.HAStateOn)
             self._command_callback(self, state)
 
     def _publish_state(self, state) -> bool:
-        return self.publish_on_data_topic(HAStateTopic, HAStateOn if state else HAStateOff)
+        return self.publish_on_data_topic(constants.HAStateTopic, constants.HAStateOn if state else constants.HAStateOff)

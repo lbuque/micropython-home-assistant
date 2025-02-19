@@ -4,21 +4,12 @@
 
 from .basic_device import HABaseDeviceType
 from ..utils.serializer import HASerializer
-from ..utils.constants import (
-    HAComponentBinarySensor,
-    HANameProperty,
-    HAObjectIdProperty,
-    HADeviceClassProperty,
-    HAIconProperty,
-    HAStateTopic,
-    HAStateOn,
-    HAStateOff,
-)
+from ..utils import constants
 
 
 class HABinarySensor(HABaseDeviceType):
     def __init__(self, unique_id) -> None:
-        super().__init__(HAComponentBinarySensor, unique_id)
+        super().__init__(constants.HAComponentBinarySensor, unique_id)
         self._class = None
         self._icon = None
         self._expire_after = 0
@@ -57,15 +48,15 @@ class HABinarySensor(HABaseDeviceType):
             return
 
         self._serializer = HASerializer(self)
-        self._serializer.set_kv(HANameProperty, self._name)
-        self._serializer.set_kv(HAObjectIdProperty, self._object_id)
+        self._serializer.set_kv(constants.HANameProperty, self._name)
+        self._serializer.set_kv(constants.HAObjectIdProperty, self._object_id)
         self._serializer.set_flag(HASerializer.WithUniqueId)
-        self._serializer.set_kv(HADeviceClassProperty, self._class)
-        self._serializer.set_kv(HAIconProperty, self._icon)
+        self._serializer.set_kv(constants.HADeviceClassProperty, self._class)
+        self._serializer.set_kv(constants.HAIconProperty, self._icon)
 
         self._serializer.set_flag(HASerializer.WithDevice)
         self._serializer.set_flag(HASerializer.WithAvailability)
-        self._serializer.set_topic(HAStateTopic)
+        self._serializer.set_topic(constants.HAStateTopic)
 
     def on_mqtt_connected(self):
         if self.unique_id is None:
@@ -78,4 +69,4 @@ class HABinarySensor(HABaseDeviceType):
         self._publish_state(self._current_state)
 
     def _publish_state(self, state) -> bool:
-        return self.publish_on_data_topic(HAStateTopic, HAStateOn if state else HAStateOff)
+        return self.publish_on_data_topic(constants.HAStateTopic, constants.HAStateOn if state else constants.HAStateOff)

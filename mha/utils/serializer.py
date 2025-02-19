@@ -3,14 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from ..ha_mqtt import HAMqtt
-from .constants import (
-    HASerializerSlash,
-    HAConfigTopic,
-    HAAvailabilityTopic,
-    HADeviceProperty,
-    HAUniqueIdProperty,
-    HASerializerUnderscore,
-)
+from . import constants
 
 
 class EntryType:
@@ -59,7 +52,7 @@ class HASerializer:
                     SerializerEntry(
                         EntryType.TopicEntryType,
                         None,
-                        HAAvailabilityTopic,
+                        constants.HAAvailabilityTopic,
                         mqtt.device.get_availability_topic() if is_shared_availability else None,
                     )
                 )
@@ -79,11 +72,11 @@ class HASerializer:
 
         l = [
             mqtt.data_prefix,
-            HASerializerSlash,
+            constants.HASerializerSlash,
             mqtt.device.get_unique_id(),
-            HASerializerSlash,
+            constants.HASerializerSlash,
         ]
-        object_id is None and l.extend([object_id, HASerializerSlash])
+        object_id is None and l.extend([object_id, constants.HASerializerSlash])
         l.append(topic)
 
         return "".join(l)
@@ -106,14 +99,14 @@ class HASerializer:
 
         return "".join([
             mqtt.discovery_prefix,
-            HASerializerSlash,
+            constants.HASerializerSlash,
             component,
-            HASerializerSlash,
+            constants.HASerializerSlash,
             mqtt.device.get_unique_id(),
-            HASerializerSlash,
+            constants.HASerializerSlash,
             object_id,
-            HASerializerSlash,
-            HAConfigTopic,
+            constants.HASerializerSlash,
+            constants.HAConfigTopic,
         ])
 
     def _flush_entry(self):
@@ -131,10 +124,10 @@ class HASerializer:
                 mqtt = HAMqtt.instance()
                 device = mqtt.device
                 if entry.subtype == self.WithDevice and device is not None:
-                    self._payload[HADeviceProperty] = device.get_serializer().flush()
+                    self._payload[constants.HADeviceProperty] = device.get_serializer().flush()
                 elif entry.subtype == self.WithUniqueId and device is not None:
-                    self._payload[HAUniqueIdProperty] = (
+                    self._payload[constants.HAUniqueIdProperty] = (
                         device.get_unique_id()
-                        + HASerializerUnderscore
+                        + constants.HASerializerUnderscore
                         + self._device_type.unique_id
                     )

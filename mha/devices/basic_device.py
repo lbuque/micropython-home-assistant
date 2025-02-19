@@ -4,11 +4,7 @@
 
 from ..ha_mqtt import HAMqtt
 from ..utils.serializer import HASerializer
-from ..utils.constants import (
-    HAAvailabilityTopic,
-    HAOnline,
-    HAOffline,
-)
+from ..utils import constants
 import json
 
 
@@ -94,7 +90,7 @@ class HABaseDeviceType:
             return
 
         self.publish_on_data_topic(
-            HAAvailabilityTopic, HAOnline if self._availability else HAOffline, True
+            constants.HAAvailabilityTopic, constants.HAOnline if self._availability else constants.HAOffline, True
         )
 
     def publish_on_data_topic(self, topic, payload, retained=False):
